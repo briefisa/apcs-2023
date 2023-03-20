@@ -202,9 +202,10 @@ public class Explorer {
      * @param path  a list of junctions visited
      * @param steps the number of steps left to hike.
      */
-    public static void explore(ArrayList<String> path, int steps) {
-        // TODO build a recursive function
 
+    public static void explore(ArrayList<String> path, int steps) {
+        String whereWeAre = path.get(path.size() - 1);
+        System.out.println("we are at " + whereWeAre);
     }
 
     public static void main(String[] args) {
