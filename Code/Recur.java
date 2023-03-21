@@ -60,7 +60,7 @@ public class Recur {
     public static void main(String[] args) {
 
         // Consider function fun3
-        // System.out.println(fun3(5));
+        System.out.println(fun3(5));
 
         // Consider function f
         // System.out.println(f(6));
