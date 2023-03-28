@@ -65,20 +65,17 @@ public class Maze {
         if (maze[r][c] == '$') {
             solution = true;
         } else {
+            maze[r][c] = ',';
             if (valid(r - 1, c)) {
-                maze[r - 1][c] = ',';
                 check(r - 1, c);
             }
             if (valid(r, c + 1)) {
-                maze[r][c + 1] = ',';
                 check(r, c + 1);
             }
             if (valid(r + 1, c)) {
-                maze[r + 1][c] = ',';
                 check(r + 1, c);
             }
             if (valid(r, c - 1)) {
-                maze[r][c - 1] = ',';
                 check(r, c - 1);
             }
         }
