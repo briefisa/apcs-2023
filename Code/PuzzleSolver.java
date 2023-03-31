@@ -3,13 +3,14 @@ import java.util.ArrayList;
 public class PuzzleSolver {
 
     public static void main(String[] args) {
-        int[] puzzle = {4, 10, 1, 6, 10, 9, 4, 2};
-        System.out.println(solve(puzzle, 0));
+        int[] puzzle = {};
+        System.out.println(solve(puzzle, 18));
     }
     
     public static String solve(int[] p, int goal) {
         String output = "";
         ArrayList<Integer> puzzle = toList(p);
+        goal -= puzzle.remove(0);
         System.out.println(listToString(puzzle));
         ArrayList<Integer> b = recurse(puzzle, goal);
 
@@ -20,7 +21,7 @@ public class PuzzleSolver {
                 output += " + " + num;
             }
         }
-        return output.substring(2);
+        return "" + p[0] + output;
     }
 
     public static ArrayList<Integer> recurse(ArrayList<Integer> p, int goal) {
@@ -48,7 +49,6 @@ public class PuzzleSolver {
         if (remainder == goal) {
             return b;
         } else if (remainder > goal) {
-            System.out.println("a =" + listToString(a));
             ArrayList<Integer> a2 = new ArrayList<Integer>();
             for (int num : a) {
                 a2.add(num);
