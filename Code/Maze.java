@@ -14,14 +14,11 @@ public class Maze {
      */
     public Maze(int rows, int cols, String line) {
         maze = new char[rows][cols];
+        solution = false;
         int index = 0;
         for (int r = 0; r < rows; r++) {
             for (int c = 0; c < cols; c++) {
-                if (index < line.length()) {
-                    maze[r][c] = line.charAt(index);
-                } else {
-                    maze[r][c] = '.';
-                }
+                maze[r][c] = line.charAt(index);
                 index++;
             }
         }
@@ -65,7 +62,9 @@ public class Maze {
         if (maze[r][c] == '$') {
             solution = true;
         } else {
-            maze[r][c] = ',';
+            if (maze[r][c] != '@') {
+                maze[r][c] = ',';
+            }
             if (valid(r - 1, c)) {
                 check(r - 1, c);
             }
@@ -88,8 +87,8 @@ public class Maze {
      */
     public boolean hasSolution() {
         solution = false;
-        int row = Integer.parseInt(getEnd().substring(0, 1));
-        int col = Integer.parseInt(getEnd().substring(2));
+        int row = Integer.parseInt(getStart().substring(0, 1));
+        int col = Integer.parseInt(getStart().substring(2));
         this.check(row, col);
         for (int r = 0; r < maze.length; r++) {
             for (int c = 0; c < maze[0].length; c++) {
@@ -110,36 +109,54 @@ public class Maze {
         return (isInBounds(r, c) && maze[r][c] != '#' && maze[r][c] != ',');
     }
 
-    // HINT overriding toString may be handy. :)
-
     public static void check(boolean test) throws AssertionError {
         if (!test)
             throw new AssertionError("sad panda");
     }
 
+    public String toString() {
+        String output = "";
+        for (char[] row : maze) {
+            for (char a : row) {
+                output += " " + a;
+            }
+            output += "\n";
+        }
+        output += "\n" + solution;
+        return output;
+    }
+
     public static void main(String[] args) {
         Maze example = new Maze(3, 3, "#.@.....$");
+//        System.out.println(example);
         check(example.hasSolution());
 
         Maze case1 = new Maze(5, 7, ".#.#....#.#.##@.....$#...#.##..#...");
+//        System.out.println(case1);
         check(case1.hasSolution());
 
         Maze case2 = new Maze(4, 4, ".#.$.##..##.@..#");
+//        System.out.println(case2);
         check(!case2.hasSolution());
 
         Maze test = new Maze(3, 3, "#.@.....$");
+//        System.out.println(test);
         check(test.hasSolution());
 
         test = new Maze(3, 3, "##@#####$");
+//        System.out.println(test);
         check(!test.hasSolution());
 
         test = new Maze(3, 3, "##@#..#.$");
+//        System.out.println(test);
         check(test.hasSolution());
 
         test = new Maze(3, 3, "#.@#.##.$");
+//        System.out.println(test);
         check(test.hasSolution());
 
         test = new Maze(3, 3, "##@#.##.$");
+//        System.out.println(test);
         check(!test.hasSolution());
 
         System.out.println("Happy Panda! \uD83D\uDC3C");
