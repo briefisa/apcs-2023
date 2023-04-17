@@ -39,15 +39,25 @@ public class WordPairList {
      * Precondition: words.length >= 2
      */
     public WordPairList(String[] words) {
-        /* to be implemented in part (a) */
+        allPairs = new ArrayList<WordPair>();
+        for (int i = 0; i < words.length - 1; i++) {
+            for (int j = i + 1; j < words.length; j++) {
+                allPairs.add(new WordPair(words[i], words[j]));
+            }
+        }
     }
 
     /**
      * Returns the number of matches as described in part (b).
      */
     public int numMatches() {
-        /* to be implemented in part (b) */
-        return -1; // replace me!
+        int matches = 0;
+        for (WordPair a : this.allPairs) {
+            if (a.getFirst().equals(a.getSecond())) {
+                matches++;
+            }
+        }
+        return matches;
     }
 
     public static void check(boolean test) throws AssertionError {
