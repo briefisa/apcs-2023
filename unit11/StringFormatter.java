@@ -13,8 +13,11 @@ public class StringFormatter {
      * only.
      */
     public static int totalLetters(List<String> wordList) {
-        // TODO part (a)
-        return -1; // replace me!
+        int count = 0;
+        for (String word : wordList) {
+            count += word.length();
+        }
+        return count;
     }
 
     /**
@@ -26,8 +29,8 @@ public class StringFormatter {
      */
     public static int basicGapWidth(List<String> wordList,
             int formattedLen) {
-        // TODO part (b)
-        return -1; // replace me!
+        int gaps = formattedLen - totalLetters(wordList);
+        return gaps / (wordList.size() - 1);
     }
 
     /**
@@ -43,8 +46,21 @@ public class StringFormatter {
      * question.
      */
     public static String format(List<String> wordList, int formattedLen) {
-        // TODO part (c)
-        return ""; // replace me!
+        String output = "";
+        int basicGap = basicGapWidth(wordList, formattedLen);
+        int extra = leftoverSpaces(wordList, formattedLen);
+        for (int i = 0; i < wordList.size() - 1; i++) {
+            output += wordList.get(i);
+            for (int j = 0; j < basicGap; j++) {
+                output += " ";
+            }
+            if (extra > 0) {
+                output += " ";
+                extra--;
+            }
+        }
+        output += wordList.get(wordList.size() - 1);
+        return output;
     }
 
     /**
