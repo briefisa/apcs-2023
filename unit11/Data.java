@@ -21,8 +21,19 @@ public class Data {
      * grid has at least one element.
      */
     public void repopulate() {
-        /* TODO to be implemented in part (a) */
-
+        for (int[] row : grid) {
+            for (int num : row) {
+                boolean valid = false;
+                while (!valid) {
+                    num = (int)(Math.random() * MAX) + 1;
+                    num /= 10;
+                    num *= 10;
+                    if (num % 100 != 0) {
+                        valid = true;
+                    }
+                }
+            }
+        }
     }
 
     /**
@@ -33,9 +44,21 @@ public class Data {
      * grid has at least one element.
      */
     public int countIncreasingCols() {
-        /* TODO to be implemented in part (b) */
-
-        return -1; // replace me!
+        int count = 0;
+        for (int col = 0; col < grid[0].length; col++) {
+            boolean isIncreasing = true;
+            for (int row = 1; row < grid.length; row++) {
+                int current = grid[row][col];
+                int previous = grid[row - 1][col];
+                if (current < previous) {
+                    isIncreasing = false;
+                }
+            }
+            if (isIncreasing) {
+                count++;
+            }
+        }
+        return count;
     }
 
     // There may be instance variables, constructors, and methods that are not
