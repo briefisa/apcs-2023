@@ -78,12 +78,5 @@ public class EulerFriday {
                 spot++;
             } else {i++;}
         } 
-        
-        for (int[] row : grid) {
-            for (int num : row) {
-                System.out.print(num + " ");
-            }
-            System.out.println("\n");
-        }
     }
 }
