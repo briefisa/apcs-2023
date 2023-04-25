@@ -3,7 +3,7 @@ package unit11;
 public class EulerFriday {
 
     public static void main(String[] args) {
-        euler12();
+        System.out.print(euler12());
     }
 
     static int[] prob8scaffold() {
@@ -40,7 +40,7 @@ public class EulerFriday {
         return nums;
     }
 
-    public static void euler12() {
+    public static int euler12() {
         String gridString = """
             08 02 22 97 38 15 00 40 00 75 04 05 07 78 52 12 50 77 91 08
             49 49 99 40 17 81 18 57 60 87 17 40 98 43 69 48 04 56 62 00
@@ -66,6 +66,7 @@ public class EulerFriday {
         int[][] grid = new int[20][20];
         int spot = 0;
         
+        //Parses String into int[][]
         for (int i = 0; i < gridString.length(); i++) {
             String sNum = "";
             while (i < gridString.length() && Character.isDigit(gridString.charAt(i))) {
@@ -78,5 +79,60 @@ public class EulerFriday {
                 spot++;
             } else {i++;}
         } 
+
+        int largest = 0;
+
+        //Vertical
+        for (int row = 0; row <= 16; row++) {
+            for (int col = 0; col < 20; col++) {
+                int product = 1;
+                for (int i = 0; i < 4; i++) {
+                    product *= grid[row + i][col];
+                }
+                if (product > largest) {
+                    largest = product;
+                }
+            }
+        }
+
+        //Horizontal
+        for (int row = 0; row < 20; row++) {
+            for (int col = 0; col <= 16; col++) {
+                int product = 1;
+                for (int i = 0; i < 4; i++) {
+                    product *= grid[row][col + i];
+                }
+                if (product > largest) {
+                    largest = product;
+                }
+            }
+        }
+
+        //Right Diagonal
+        for (int row = 0; row <= 16; row++) {
+            for (int col = 0; col <= 16; col++) {
+                int product = 1;
+                for (int i = 0; i < 4; i++) {
+                    product *= grid[row + i][col + i];
+                }
+                if (product > largest) {
+                    largest = product;
+                }
+            }
+        }
+
+        //Left Diagonal
+        for (int row = 0; row <= 16; row++) {
+            for (int col = 3; col < 20; col++) {
+                int product = 1;
+                for (int i = 0; i < 4; i++) {
+                    product *= grid[row + i][col - i];
+                }
+                if (product > largest) {
+                    largest = product;
+                }
+            }
+        }
+        return largest;
     }
 }
