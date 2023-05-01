@@ -9,11 +9,30 @@ public class SpellingBee {
     private char[] letters;
     private char mustUse;
 
-    // TODO construct me!
+    public SpellingBee(char[] letters, char mustUse) {
+        this.letters = letters;
+        this.mustUse = mustUse;
+    }
 
     public boolean checkWord(String word) {
-        // TODO implement me!
-        return true;
+        boolean mustMatch = false;
+        boolean matches = true;
+        for (int i = 0; i < word.length(); i++) {
+            char letter = word.charAt(i);
+            boolean match = false;
+            for (char a : letters) {
+                if (letter == a) {
+                    match = true;
+                }
+            }
+            if (!match) {
+                matches = false;
+            }
+            if (letter == mustUse) {
+                mustMatch = true;
+            }
+        }
+        return (mustMatch && matches); 
     }
 
     /**
@@ -36,15 +55,64 @@ public class SpellingBee {
         return contents;
     }
 
+    public static String[] mergeSort(String[] words) {
+        if (words.length == 1) {
+            return words;
+        } else {
+            int len = words.length;
+            String[] first = new String[len/2];
+            String[] second = new String[(len + 1)/2];
+            int i = 0;
+            while (i < first.length) {
+                first[i] = words[i];
+                i++;
+            }
+            while (i < (first.length + second.length)) {
+                second[i - first.length] = words[i];
+                i++;
+            }
+            first = mergeSort(first);
+            second = mergeSort(second);
+            String[] output = new String[len];
+            int a = 0, b = 0;
+
+            while ((a < first.length) && (b < second.length)) {
+                if (first[a].compareTo(second[b]) <= 0) {
+                    output[a + b] = first[a];
+                    a++;
+                } else if(first[a].compareTo(second[b]) > 0) {
+                    output[a + b] = second[b];
+                    b++;
+                }
+            }
+            while (a < first.length) {
+                output[a + b] = first[a];
+                a++;
+            }
+            while (b < second.length) {
+                output[a + b] = second[b];
+                b++;
+            }
+            return output;
+        }
+    }
+
     public static void main(String[] args) {
-        String[] words = loadFile("words_dropped.txt").split("\n");
+        String[] words = mergeSort(loadFile("words_dropped.txt").split("\n"));
         System.out.println("Loaded " + words.length + " words");
-        // TODO solve me!
-        // SpellingBee bee = new SpellingBee("ranglty".toCharArray(), 'y');
+        for (String word : words) {
+            System.out.println(word);
+        }
 
-        // TODO sort words!
+        SpellingBee bee = new SpellingBee("ranglty".toCharArray(), 'y');
 
-        // TODO what position in the sorted list is the word "search" ?
-
+        int matches = 0;
+        for (int i = 0; i < words.length; i++) {
+            if (bee.checkWord(words[i])) {
+                System.out.println("Word #" + (i + 1) + " matches!");
+                matches++;
+            }
+        }
+        System.out.println("Total matches = " + matches);
     }
 }
