@@ -3,6 +3,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 
 public class SpellingBee {
 
@@ -94,6 +95,36 @@ public class SpellingBee {
                 b++;
             }
             return output;
+        }
+    }
+
+    public static String[] mergeSortIterative(String[] words) {
+        ArrayList<String> output = new ArrayList<String>();
+        int index = 1;
+        for (String str : words) {
+            output.add(str);
+        }
+        for (int i = 1; i < words.length/2; i *= 2) {
+            int j = 0;
+            while (j < words.length) {
+                int a = 0, b = 0;
+                while (a < i && b < i) {
+                    int compare = output.get(j + a).compareTo(output.get(j + i + b));
+                    if (compare <= 0) {
+                        a++;
+                    } else if(compare > 0) {
+                        output.add(j + a, output.get(j + i + b));
+                        a++;
+                        b++;
+                    }
+                }
+                j += i;
+            }
+            if (j - i < words.length) {
+                j -= i;
+                int rem = words.length - j;
+                
+            }
         }
     }
 
