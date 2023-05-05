@@ -11,3 +11,4 @@ Record your discoveries in the list below, as [Markdown](https://www.markdowngui
 ## Technologies
 
 - [Clash of Clans](https://supercell.com/en/games/clashofclans/) is programmed with Objective C/C++ clients and a Java server. Source: [quora](https://www.quora.com/What-programming-language-is-used-in-Clash-of-Clan-Game?share=1)
+- [Ableton Live](https://www.ableton.com/en/live/) is programmed with C++, with some minor parts coded in Python. Source: [Wikipedia](https://en.wikipedia.org/wiki/Ableton_Live)
