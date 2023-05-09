@@ -36,8 +36,6 @@ def merge_sort(wordList):
 array = []
 for x in range(100):
     array.append(random.randint(0, 100))
-print(len(array))
 array = merge_sort(array)
 for a in array:
-    print(a)
-print("length: ", len(array))
+    print(a, end = ' ')
