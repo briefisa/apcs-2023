@@ -13,5 +13,5 @@ class Object2(Object):
     def __str__(self):
         return super().__str__() + ' ' + str(self.b)
 
-thing = Object2('hello', 'world')
+thing = Object2('hello', 'world!')
 print(thing)
