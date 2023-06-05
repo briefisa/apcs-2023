@@ -26,6 +26,30 @@ def fft(P: list) -> list:
         y[j + n//2] = ye[j] - (pow(w, j))*yo[j]
     return y
 
+def iterative_fft(P: list) -> list:
+    N, a = len(P), 1
+    sets = [[0]]*N
+    for i in range(N):
+        sets[i][0] = (P[i])
+    while N > 1:
+        N = len(sets)
+        n = 2**a
+        for i in range(0, N//2):
+            w = complex(math.cos((2*math.pi)/n), math.sin((2*math.pi)/n))
+            for j in range(n//2):
+                temp = [0]*n
+                temp[j] = sets[i][j] + pow(w, j)*sets[i + 1][j]
+                temp[j + n//2] = sets[i][j] - pow(w, j)*sets[i + 1][j]
+                sets[i] = temp
+            sets.pop(i + 1)
+        a += 1
+    return sets
+    
+
+
+
+
+
 #Credit: Reducible (https://youtu.be/h7apO7q16V0)
 def ifft(P):
     n = len(P)
@@ -40,12 +64,6 @@ def ifft(P):
         y[j + n//2] = ye[j] - (pow(w, j))*yo[j]
     return y
 
-def iterative_fft(P: list) -> list:
-    n = len(P)
-    sets = []
-    for a in P:
-        
-
 
 
 #def func1(x: float):
@@ -54,8 +72,10 @@ def iterative_fft(P: list) -> list:
 #def func2(x: float):
 #    return 0
 
-a = [1, 1, 1, 1]
-print(ifft(fft(a)))
+a = [1, 0, 0, 0]
+b = [1, 2, 3, 4]
+print(b[::2])
+print(iterative_fft(a))
 
 
 
