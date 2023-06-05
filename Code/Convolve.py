@@ -12,41 +12,40 @@ def discrete_conv(a: list, b: list) -> list:
         output.append(num)
     return output
 
+#Credit: Reducible (https://youtu.be/h7apO7q16V0)
 def fft(P: list) -> list:
     n = len(P)
     if n == 1:
-        return n
+        return P
     w = complex(math.cos((2*math.pi)/n), math.sin((2*math.pi)/n))
     Pe, Po = P[::2], P[1::2]
     ye, yo = fft(Pe), fft(Po)
     y = [0]*n
-    if type(ye) == int:
-        for j in range(n//2):
-            y[j] = ye + (pow(w, j))*yo
-            y[j + n//2] = ye - (pow(w, j))*yo
-    else:
-        for j in range(n//2):
-            y[j] = ye[j] + (pow(w, j))*yo[j]
-            y[j + 1] = ye[j] - (pow(w, j))*yo[j]
+    for j in range(n//2):
+        y[j] = ye[j] + (pow(w, j))*yo[j]
+        y[j + n//2] = ye[j] - (pow(w, j))*yo[j]
     return y
 
+#Credit: Reducible (https://youtu.be/h7apO7q16V0)
 def ifft(P):
     n = len(P)
     if n == 1:
-        return n
+        return P
     w = (1/n)*complex(math.cos((2*math.pi)/n), math.sin((2*math.pi)/n))
     Pe, Po = P[::2], P[1::2]
     ye, yo = ifft(Pe), ifft(Po)
     y = [0]*n
-    if type(ye) == int:
-        for j in range(n//2):
-            y[j] = ye + (pow(w, j))*yo
-            y[j + n//2] = ye - (pow(w, j))*yo
-    else:
-        for j in range(n//2):
-            y[j] = ye[j] + (pow(w, j))*yo[j]
-            y[j + n//2] = ye[j] - (pow(w, j))*yo[j]
+    for j in range(n//2):
+        y[j] = ye[j] + (pow(w, j))*yo[j]
+        y[j + n//2] = ye[j] - (pow(w, j))*yo[j]
     return y
+
+def iterative_fft(P: list) -> list:
+    n = len(P)
+    sets = []
+    for a in P:
+        
+
 
 
 #def func1(x: float):
@@ -55,8 +54,8 @@ def ifft(P):
 #def func2(x: float):
 #    return 0
 
-a = [5, 1, 3, 2]
-print(fft(a))
+a = [1, 1, 1, 1]
+print(ifft(fft(a)))
 
 
 
