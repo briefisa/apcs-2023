@@ -1,4 +1,5 @@
 import math, cmath, random, time
+import numpy as np
 
 start = time.time()
 
@@ -85,6 +86,9 @@ def iterative_ifft(P: list) -> list:
         sets[0][a] = sets[0][a]/length
     return sets[0]
 
+def fft_conv(A, B):
+    None
+
 #def func1(x: float):
 #    return x
 
@@ -93,12 +97,15 @@ def iterative_ifft(P: list) -> list:
 vals = []
 for _ in range(2**15):
     vals.append(random.randint(0,100))
-valsF = iterative_ifft(iterative_fft(vals))
+valsF = iterative_fft(vals)
+control = np.fft(vals)
 
 end = time.time()
 
 for a in range(25):
     print(vals[a], ' ', valsF[a])
+    print (valsF[a], ' ', control[a])
+#print(iterative_fft(a))
 print("Done in ", (end - start) * 10**3, " ms")
 
 
