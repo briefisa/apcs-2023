@@ -70,7 +70,7 @@ def iterative_ifft(P: list) -> list:
     while N > 1:
         n = 2**a
         for i in range(0, N//2):
-            w = (1/n)*complex(math.cos((2*math.pi)/n), math.sin((2*math.pi)/n))
+            w = 1/(complex(math.cos((2*math.pi)/n), math.sin((2*math.pi)/n)))
             temp = [0]*n
             for j in range(n//2):
                 temp[j] = sets[i][j] + pow(w, j)*sets[i + N//2][j]
@@ -80,6 +80,9 @@ def iterative_ifft(P: list) -> list:
             sets.pop(N//2)
         a += 1
         N = len(sets)
+    length = len(sets[0])
+    for a in range(length):
+        sets[0][a] = sets[0][a]/length
     return sets[0]
 
 #def func1(x: float):
@@ -87,16 +90,16 @@ def iterative_ifft(P: list) -> list:
 
 #def func2(x: float):
 #    return 0
-vals = [5, 3, 2, 1]
-#for _ in range(2**15):
-#    vals.append(random.randint(0,100))
-#vals = iterative_fft(vals)
+vals = []
+for _ in range(2**15):
+    vals.append(random.randint(0,100))
+valsF = iterative_ifft(iterative_fft(vals))
 
 end = time.time()
 
-print(iterative_fft(vals))
+for a in range(25):
+    print(vals[a], ' ', valsF[a])
 print("Done in ", (end - start) * 10**3, " ms")
-#print("recursive: ", fft(vals))
 
 
 
