@@ -1,4 +1,6 @@
-import math, cmath
+import math, cmath, random, time
+
+start = time.time()
 
 def discrete_conv(a: list, b: list) -> list:
     output = []
@@ -13,7 +15,7 @@ def discrete_conv(a: list, b: list) -> list:
     return output
 
 #Credit: Reducible (https://youtu.be/h7apO7q16V0)
-def fft(P: list) -> list:
+def recursive_fft(P: list) -> list:
     n = len(P)
     if n == 1:
         return P
@@ -26,32 +28,8 @@ def fft(P: list) -> list:
         y[j + n//2] = ye[j] - (pow(w, j))*yo[j]
     return y
 
-def iterative_fft(P: list) -> list:
-    N, a = len(P), 1
-    sets = [[0]]*N
-    for i in range(N):
-        sets[i][0] = (P[i])
-    while N > 1:
-        N = len(sets)
-        n = 2**a
-        for i in range(0, N//2):
-            w = complex(math.cos((2*math.pi)/n), math.sin((2*math.pi)/n))
-            for j in range(n//2):
-                temp = [0]*n
-                temp[j] = sets[i][j] + pow(w, j)*sets[i + 1][j]
-                temp[j + n//2] = sets[i][j] - pow(w, j)*sets[i + 1][j]
-                sets[i] = temp
-            sets.pop(i + 1)
-        a += 1
-    return sets
-    
-
-
-
-
-
 #Credit: Reducible (https://youtu.be/h7apO7q16V0)
-def ifft(P):
+def recursive_ifft(P):
     n = len(P)
     if n == 1:
         return P
@@ -63,19 +41,62 @@ def ifft(P):
         y[j] = ye[j] + (pow(w, j))*yo[j]
         y[j + n//2] = ye[j] - (pow(w, j))*yo[j]
     return y
+    
+def iterative_fft(P: list) -> list:
+    N, a = len(P), 1
+    sets = [[0] for _ in range(N)]
+    for i in range(N):
+        sets[i][0] = P[i]
+    while N > 1:
+        n = 2**a
+        for i in range(0, N//2):
+            w = complex(math.cos((2*math.pi)/n), math.sin((2*math.pi)/n))
+            temp = [0]*n
+            for j in range(n//2):
+                temp[j] = sets[i][j] + pow(w, j)*sets[i + N//2][j]
+                temp[j + n//2] = sets[i][j] - (pow(w, j)*sets[i + N//2][j])
+            sets[i] = temp
+        for _ in range(N//2, N):
+            sets.pop(N//2)
+        a += 1
+        N = len(sets)
+    return sets[0]
 
-
+def iterative_ifft(P: list) -> list:
+    N, a = len(P), 1
+    sets = [[0] for _ in range(N)]
+    for i in range(N):
+        sets[i][0] = P[i]
+    while N > 1:
+        n = 2**a
+        for i in range(0, N//2):
+            w = (1/n)*complex(math.cos((2*math.pi)/n), math.sin((2*math.pi)/n))
+            temp = [0]*n
+            for j in range(n//2):
+                temp[j] = sets[i][j] + pow(w, j)*sets[i + N//2][j]
+                temp[j + n//2] = sets[i][j] - (pow(w, j)*sets[i + N//2][j])
+            sets[i] = temp
+        for _ in range(N//2, N):
+            sets.pop(N//2)
+        a += 1
+        N = len(sets)
+    return sets[0]
 
 #def func1(x: float):
 #    return x
 
 #def func2(x: float):
 #    return 0
+vals = [5, 3, 2, 1]
+#for _ in range(2**15):
+#    vals.append(random.randint(0,100))
+#vals = iterative_fft(vals)
 
-a = [1, 0, 0, 0]
-b = [1, 2, 3, 4]
-print(b[::2])
-print(iterative_fft(a))
+end = time.time()
+
+print(iterative_fft(vals))
+print("Done in ", (end - start) * 10**3, " ms")
+#print("recursive: ", fft(vals))
 
 
 
