@@ -140,17 +140,17 @@ def convolve(kernelFunction, signalFunction, start, end, duration, sampleRate, p
             t -= (1/sampleRate)
 
         for a in packet:
-            output.append(np.real(a))
+            output.append(np.real(a)*2*packetSize)
 
     return output
 
 def signal(t):
-    return 500000000000.0
+    return 1.0
 
 def kernel(t):
     return 1.0
 
-a = convolve(kernel, signal, 0.0, (1/2**5),1,2**5,2**10)
+a = convolve(kernel, signal, 0.0, (1/2**12),1,2**12,2**15)
 print(a)
 
 
