@@ -1,14 +1,6 @@
 import math, cmath, random, time
 import numpy as np
-
-def sample():
-    signalSample = []
-    while len(signalSample) < 2**13:
-        signalSample.append(signal())
-   
-
-
-
+import matplotlib.pyplot as plt
 
 def discrete_conv(a: list, b: list) -> list:
     output = []
@@ -22,7 +14,6 @@ def discrete_conv(a: list, b: list) -> list:
         output.append(num)
     return output
 
-
 #Credit: Reducible (https://youtu.be/h7apO7q16V0)
 def recursive_fft(P: list) -> list:
     n = len(P)
@@ -30,13 +21,12 @@ def recursive_fft(P: list) -> list:
         return P
     w = complex(math.cos((2*math.pi)/n), math.sin((2*math.pi)/n))
     Pe, Po = P[::2], P[1::2]
-    ye, yo = fft(Pe), fft(Po)
+    ye, yo = recursive_fft(Pe), recursive_fft(Po)
     y = [0]*n
     for j in range(n//2):
         y[j] = ye[j] + (pow(w, j))*yo[j]
         y[j + n//2] = ye[j] - (pow(w, j))*yo[j]
     return y
-
 
 #Credit: Reducible (https://youtu.be/h7apO7q16V0)
 def recursive_ifft(P):
@@ -45,14 +35,14 @@ def recursive_ifft(P):
         return P
     w = (1/n)*complex(math.cos((2*math.pi)/n), math.sin((2*math.pi)/n))
     Pe, Po = P[::2], P[1::2]
-    ye, yo = ifft(Pe), ifft(Po)
+    ye, yo = recursive_ifft(Pe), recursive_ifft(Po)
     y = [0]*n
     for j in range(n//2):
         y[j] = ye[j] + (pow(w, j))*yo[j]
         y[j + n//2] = ye[j] - (pow(w, j))*yo[j]
     return y
-   
-def iterative_fft(P: list) -> list:
+    
+def fft(P: list) -> list:
     N, a = len(P), 1
     sets = [[0] for _ in range(N)]
     for i in range(N):
@@ -72,8 +62,7 @@ def iterative_fft(P: list) -> list:
         N = len(sets)
     return sets[0]
 
-
-def iterative_ifft(P: list) -> list:
+def ifft(P: list) -> list:
     N, a = len(P), 1
     sets = [[0] for _ in range(N)]
     for i in range(N):
@@ -96,9 +85,6 @@ def iterative_ifft(P: list) -> list:
         sets[0][a] = sets[0][a]/length
     return sets[0]
 
-def signal():
-    return np.sin(2*math.pi*time) + np.cos(2.5*math.pi*time)
- 
 class Kernel:
     def __init__(self, function, sampleRate: int, start: float, end: float):
         self.function = function
@@ -106,53 +92,67 @@ class Kernel:
         self.start = start
         self.end = end
         self.kernelSample = []
-        for a in range(start, end, 1/sampleRate):
-            self.kernelsample.append(self.function(a))
-    
+        t = start
+        while t < end:
+            self.kernelSample.append(self.function(t))
+            t += 1/sampleRate
+
     def getKernel(self):
         return self.kernelSample
-
+        
 # sampleRate(Hz) and packetSize(# of samples) must be powers of 2
 def convolve(kernelFunction, signalFunction, start, end, duration, sampleRate, packetSize):
     kern = Kernel(kernelFunction, sampleRate, start, end)
     kernelSample = kern.getKernel()
 
-    # ensures kernel and packet are of same size
-    while len(kernelSample) < packetSize - 1:
+    # ensures kernel and packet are of same size and adds filler terms
+    while len(kernelSample) < packetSize*2:
         kernelSample.append(0.0)
+    kernelSample = fft(kernelSample)
 
+    output = []
+    # adjusts t so that initial tail falls before 0
+    t = 0.0 - (packetSize*(1/sampleRate))
     # sampling input signal
+    count = 0
+    while t < duration:
+        packet = []
+        while len(packet) < packetSize:
+            packet.append(signalFunction(t))
+            t += 1/sampleRate
+        # adds filler terms so that polynomial degree can double
+        while len(packet) < 2*packetSize:
+            packet.append(0.0)
+            t += 1/sampleRate
+        packet = fft(packet)
+
+        # multiplying transformed terms
+        for a in range(len(packet)):
+            packet[a] = packet[a]*kernelSample[a]
+        packet = ifft(packet)
+
+        # removing tails
+        for a in range(packetSize):
+            packet.pop(0)
+            t -= (1/sampleRate)
+        for a in range(packetSize - len(kern.getKernel())):
+            packet.pop(-1)
+            t -= (1/sampleRate)
+
+        for a in packet:
+            output.append(np.real(a))
+
+    return output
+
+def signal(t):
+    return 500000000000.0
+
+def kernel(t):
+    return 1.0
+
+a = convolve(kernel, signal, 0.0, (1/2**5),1,2**5,2**10)
+print(a)
+
+
     
-    
-
-vals = []
-#for _ in range(2**15):
-#    vals.append(random.randint(0,100))
-#valsF = iterative_ifft(vals)
-#control = np.fft.ifft(vals)
-
-
-end = time.time()
-
-a = [1,2,3,4,5,6,7,8]
-b = [0,0,0,1,2,0,0]
-print(discrete_conv(a, b))
-
-#for a in range(25):
-    #print(vals[a], ' ', valsF[a])
-    #print (valsF[a], ' ', control[a])
-#print(iterative_fft(a))
-#print("Done in ", (end - start) * 10**3, " ms")
-
-
-
-
-
-
-
-
-
-
-
-
 
