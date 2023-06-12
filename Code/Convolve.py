@@ -99,11 +99,50 @@ class Kernel:
 
     def getKernel(self):
         return self.kernelSample
-        
-# sampleRate(Hz) and packetSize(# of samples) must be powers of 2
-def convolve(kernelFunction, signalFunction, start, end, duration, sampleRate, packetSize):
+
+def dumb_convolve(kernelFunction, signalFunction, start, end, duration, sampleRate, packetSize):
     kern = Kernel(kernelFunction, sampleRate, start, end)
     kernelSample = kern.getKernel()
+
+    # ensures kernel and packet are of same size and adds filler terms
+    while len(kernelSample) < packetSize*2:
+        kernelSample.append(0.0)
+
+    output = []
+    # adjusts t so that initial tail falls before 0
+    t = 0.0 - (packetSize*(1/sampleRate))
+    # sampling input signal
+    count = 0
+    while t < duration:
+        packet = []
+        while len(packet) < packetSize:
+            packet.append(signalFunction(t))
+            t += 1/sampleRate
+        # adds filler terms so that polynomial degree can double
+        while len(packet) < 2*packetSize:
+            packet.append(0.0)
+            t += 1/sampleRate
+
+        packet = discrete_conv(packet, kernelSample)
+
+        # removing tails
+        for a in range(packetSize):
+            packet.pop(-1)
+            t -= (1/sampleRate)
+        for a in range(packetSize - len(kern.getKernel())):
+            packet.pop(0)
+            t -= (1/sampleRate)
+
+        for a in packet:
+            output.append(np.real(a))
+
+    return output
+    
+# sampleRate(Hz) and packetSize(# of samples) must be powers of 2
+def fft_convolve(kernelFunction, signalFunction, start, end, duration, sampleRate, packetSize):
+    kern = Kernel(kernelFunction, sampleRate, start, end)
+    kernelSample = kern.getKernel()
+    kernLength = len(kern.getKernel())
 
     # ensures kernel and packet are of same size and adds filler terms
     while len(kernelSample) < packetSize*2:
@@ -132,26 +171,54 @@ def convolve(kernelFunction, signalFunction, start, end, duration, sampleRate, p
         packet = ifft(packet)
 
         # removing tails
-        for a in range(packetSize):
+        for a in range(kernLength):
             packet.pop(0)
             t -= (1/sampleRate)
-        for a in range(packetSize - len(kern.getKernel())):
+        for a in range(packetSize):
             packet.pop(-1)
             t -= (1/sampleRate)
 
         for a in packet:
-            output.append(np.real(a)*2*packetSize)
+            output.append(np.real(a))
 
     return output
-
-def signal(t):
-    return 1.0
 
 def kernel(t):
     return 1.0
 
-a = convolve(kernel, signal, 0.0, (1/2**12),1,2**12,2**15)
+def signal1(t):
+    num = np.floor(t)
+    if num%2 == 0:
+        return t - num - 1
+    else:
+        return num - t
+    
+def signal2(t):
+    return np.sin(t)
+
+
+# time test (fft vs non-fft convolution - spoiler fft wins)
+
+start = time.time()
+a = fft_convolve(kernel, signal2, 0.0, 0.005,2,2**8,2**9)
+end = time.time()
+#print((end - start)*10**3)
+
+#start = time.time()
+#a = dumb_convolve(kernel, signal1, 0.0, 0.1,50,2**8,2**11)
+#end = time.time()
+#print((end - start)*10**3)
+
+
+# plotter does not work in codespace unfortunately (I swear it's not my fault)
+
 print(a)
+plt.plot(a)
+plt.show()
+
+
+
+
 
 
     
